@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portal do Bebedouro
 
-## Getting Started
+Site estático em [Astro](https://astro.build), com design system "Jornal da Água".
 
-First, run the development server:
+## Rodar localmente
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev       # http://localhost:4321 (também acessível na rede local)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Para conferir a versão final antes de subir:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build     # gera dist/
+npm run preview   # serve dist/ em http://localhost:4321
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Estrutura
 
-## Learn More
+- `content/posts/*.mdx`: artigos (frontmatter validado em `src/content.config.ts`)
+- `public/images/`: capas e banners
+- `src/styles/tokens.css`: tokens do design system (cor, tipo, espaço, modo escuro)
+- `src/components/`: componentes (`CardPost`, `Selo`, `SecaoCabecalho`, `Lateral`...)
+- `src/pages/`: rotas (`/`, `/[categoria]`, `/artigo/[slug]`)
+- `/design-system`: página interna com tokens e componentes (fora do sitemap e com noindex)
 
-To learn more about Next.js, take a look at the following resources:
+## Publicar
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A Vercel publica a branch `master`. Trabalhe em outra branch e só faça merge na `master` quando estiver pronto.

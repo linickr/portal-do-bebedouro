@@ -1,0 +1,193 @@
+@import '@fontsource-variable/fraunces/full.css';
+@import '@fontsource-variable/fraunces/full-italic.css';
+@import '@fontsource-variable/source-serif-4/opsz.css';
+@import '@fontsource-variable/source-serif-4/opsz-italic.css';
+@import '@fontsource-variable/instrument-sans';
+@import './tokens.css';
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--c-fundo);
+  color: var(--c-texto);
+  font-family: var(--ff-ui);
+  font-size: var(--fs-ui);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-foco);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--c-acento);
+  color: var(--c-sobre-acento);
+}
+
+/* ---------- Utilitários do sistema ---------- */
+.container {
+  width: 100%;
+  max-width: var(--largura);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Rótulo de editoria / kicker */
+.kicker {
+  font-family: var(--ff-ui);
+  font-size: var(--fs-micro);
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-acento);
+}
+
+/* Metadados (data · leitura) */
+.meta {
+  font-family: var(--ff-ui);
+  font-size: var(--fs-meta);
+  color: var(--c-texto-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.meta > * + *::before {
+  content: '·';
+  margin-inline: 0.5em;
+}
+
+/* Manchetes */
+.manchete {
+  font-family: var(--ff-display);
+  font-weight: 560;
+  font-variation-settings: 'opsz' 96, 'SOFT' 30, 'WONK' 0;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.titulo {
+  font-family: var(--ff-display);
+  font-weight: 520;
+  font-variation-settings: 'opsz' 36, 'SOFT' 50;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* Link de título: sublinhado que cresce */
+.link-titulo {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+a:hover .link-titulo,
+.link-titulo:hover {
+  background-size: 100% 1px;
+  color: var(--c-acento);
+}
+
+.clamp-2,
+.clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.clamp-2 { -webkit-line-clamp: 2; }
+.clamp-3 { -webkit-line-clamp: 3; }
+
+/* Moldura de imagem com fallback "água" */
+.foto {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 20% 0%, color-mix(in srgb, var(--c-acento) 35%, transparent), transparent 60%),
+    linear-gradient(160deg, var(--cobalto-700), var(--tinta-900));
+  border-radius: var(--raio);
+}
+
+.foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms var(--ease);
+}
+
+a:hover .foto img {
+  transform: scale(1.03);
+}
+
+/* ---------- Movimento ---------- */
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.surgir {
+  animation: surgir 700ms var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
+}

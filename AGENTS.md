@@ -1,5 +1,6 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# Astro 7
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+Este projeto usa Astro 7.x, mais novo que boa parte do material de treino. Antes de usar uma API, confira os tipos em `node_modules/astro/` e respeite os avisos de depreciação. Exemplo: `z` vem de `astro/zod`, não de `astro:content`.
+
+- Conteúdo: Content Layer (`src/content.config.ts`, loader `glob`, `render(entry)`).
+- Estilo: CSS puro com tokens em `src/styles/tokens.css`. Não use cores ou tamanhos soltos, use os tokens semânticos (`--c-*`, `--fs-*`, `--sp-*`).

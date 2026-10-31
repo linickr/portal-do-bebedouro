@@ -1,0 +1,209 @@
+---
+const temas = ['Normas & Legislação', 'Mercado & Setor', 'Saúde da Água', 'Reviews & Guias']
+---
+
+<section class="newsletter" id="newsletter" aria-labelledby="nl-titulo">
+  <div class="container grade">
+    <div>
+      <p class="kicker">Newsletter semanal</p>
+      <h2 id="nl-titulo" class="manchete">A Carta da <em>Água</em></h2>
+      <p class="sub">
+        Toda segunda, o que mudou nas normas, no mercado e na ciência da água potável, em cinco minutos de leitura.
+      </p>
+      <dl class="numeros">
+        <div><dt>Assinantes</dt><dd>12.400</dd></div>
+        <div><dt>Frequência</dt><dd>Semanal</dd></div>
+        <div><dt>Preço</dt><dd>Grátis</dd></div>
+      </dl>
+    </div>
+
+    <form class="form" data-newsletter>
+      <label>
+        <span>Nome</span>
+        <input type="text" name="nome" autocomplete="name" placeholder="Seu nome" />
+      </label>
+      <label>
+        <span>E-mail</span>
+        <input type="email" name="email" autocomplete="email" required placeholder="seu@email.com" />
+      </label>
+      <fieldset>
+        <legend>Temas de interesse</legend>
+        <div class="temas">
+          {
+            temas.map((t) => (
+              <label class="tema">
+                <input type="checkbox" name="temas" value={t} checked />
+                <span>{t}</span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+      <button type="submit">Assinar gratuitamente <span aria-hidden="true">→</span></button>
+      <p class="aviso">Sem spam. Cancele quando quiser.</p>
+    </form>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      // TODO: conectar ao provedor de e-mail (Mailchimp, Brevo, etc.)
+      form.innerHTML = '<p class="nl-ok">Inscrição confirmada. Até segunda!</p>'
+    })
+  })
+</script>
+
+<style>
+  .newsletter {
+    margin-top: var(--sp-9);
+    padding-block: var(--sp-9);
+    background:
+      radial-gradient(60% 120% at 100% 0%, color-mix(in srgb, var(--cobalto-500) 40%, transparent), transparent 70%),
+      var(--c-invertido);
+    color: var(--c-sobre-invertido);
+  }
+  .grade {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--sp-8);
+    align-items: center;
+  }
+  .kicker {
+    color: var(--cobalto-300);
+  }
+  .manchete {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-mega);
+  }
+  .manchete em {
+    font-weight: 300;
+    color: var(--cobalto-300);
+  }
+  .sub {
+    max-width: 30rem;
+    margin-top: var(--sp-5);
+    font-family: var(--ff-texto);
+    font-size: var(--fs-corpo);
+    opacity: 0.8;
+  }
+  .numeros {
+    display: flex;
+    gap: var(--sp-7);
+    margin-top: var(--sp-6);
+  }
+  dt {
+    font-size: var(--fs-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+  dd {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-size: var(--fs-h3);
+  }
+  .form {
+    display: grid;
+    gap: var(--sp-5);
+    padding: var(--sp-6);
+    border: var(--filete) solid color-mix(in srgb, currentColor 20%, transparent);
+    border-radius: var(--raio);
+    background: color-mix(in srgb, currentColor 4%, transparent);
+  }
+  .form > label,
+  fieldset {
+    display: grid;
+    gap: var(--sp-2);
+  }
+  .form > label > span,
+  legend {
+    font-size: var(--fs-micro);
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+  }
+  legend {
+    margin-bottom: var(--sp-2);
+  }
+  .form input[type='text'],
+  .form input[type='email'] {
+    padding: var(--sp-3) 0;
+    background: none;
+    border: 0;
+    border-bottom: var(--filete) solid color-mix(in srgb, currentColor 35%, transparent);
+    font-size: 1.0625rem;
+    transition: border-color var(--dur);
+  }
+  .form input::placeholder {
+    color: inherit;
+    opacity: 0.35;
+  }
+  .form input:focus {
+    outline: 0;
+    border-color: var(--cobalto-300);
+  }
+  .temas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-2);
+  }
+  .tema {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-meta);
+    cursor: pointer;
+  }
+  .tema input {
+    accent-color: var(--cobalto-300);
+  }
+  button {
+    padding: var(--sp-4);
+    background: var(--c-sobre-invertido);
+    color: var(--c-invertido);
+    border: 0;
+    border-radius: var(--raio);
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background var(--dur);
+  }
+  button:hover {
+    background: var(--cobalto-300);
+  }
+  .aviso {
+    text-align: center;
+    font-size: var(--fs-meta);
+    opacity: 0.45;
+  }
+  :global(.nl-ok) {
+    font-family: var(--ff-display);
+    font-size: var(--fs-h4);
+  }
+
+  @media (max-width: 860px) {
+    .grade {
+      grid-template-columns: 1fr;
+      gap: var(--sp-6);
+    }
+    .newsletter {
+      padding-block: var(--sp-8);
+    }
+    .numeros {
+      gap: var(--sp-5);
+    }
+    .form {
+      padding: var(--sp-5);
+    }
+    .temas {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

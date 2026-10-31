@@ -1,0 +1,281 @@
+---
+import Base from '@/layouts/Base.astro'
+import CardPost from '@/components/CardPost.astro'
+import Selo from '@/components/Selo.astro'
+import SecaoCabecalho from '@/components/SecaoCabecalho.astro'
+import { getPosts } from '@/lib/posts'
+
+const posts = await getPosts()
+const exemplo = posts[0]
+
+const cores = [
+  ['--c-fundo', 'Fundo (papel)'],
+  ['--c-superficie', 'Superfície'],
+  ['--c-superficie-2', 'Superfície 2'],
+  ['--c-filete', 'Filete'],
+  ['--c-texto', 'Texto (tinta)'],
+  ['--c-texto-2', 'Texto 2'],
+  ['--c-texto-3', 'Texto 3'],
+  ['--c-acento', 'Acento (cobalto)'],
+  ['--c-invertido', 'Invertido'],
+  ['--c-ok', 'Ok / guia'],
+  ['--c-alerta', 'Alerta'],
+]
+
+const escala = [
+  ['--fs-mega', 'Mega', 'manchete'],
+  ['--fs-h1', 'H1', 'manchete'],
+  ['--fs-h2', 'H2', 'titulo'],
+  ['--fs-h3', 'H3', 'titulo'],
+  ['--fs-h4', 'H4', 'titulo'],
+  ['--fs-corpo', 'Corpo', 'texto'],
+  ['--fs-ui', 'Interface', 'ui'],
+  ['--fs-meta', 'Meta', 'ui'],
+]
+
+const espacos = ['--sp-1', '--sp-2', '--sp-3', '--sp-4', '--sp-5', '--sp-6', '--sp-7', '--sp-8', '--sp-9']
+---
+
+<Base title="Design System" noindex>
+  <div class="container ds">
+    <header class="cab">
+      <p class="kicker">Documentação interna</p>
+      <h1 class="manchete">Jornal da <em>Água</em></h1>
+      <p class="intro">
+        O design system do Portal do Bebedouro. Papel e tinta como base, um único acento cobalto, e tipografia de
+        jornal: Fraunces para manchetes, Source Serif 4 para leitura e Instrument Sans para interface. Tokens em
+        <code>src/styles/tokens.css</code>.
+      </p>
+    </header>
+
+    <section>
+      <SecaoCabecalho numero="01" titulo="Cor" />
+      <div class="cores">
+        {
+          cores.map(([v, nome]) => (
+            <div class="cor">
+              <span class="amostra" style={`background:var(${v})`} />
+              <strong>{nome}</strong>
+              <code>{v}</code>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section>
+      <SecaoCabecalho numero="02" titulo="Tipografia" />
+      <div class="familias">
+        <div>
+          <p class="kicker">Display</p>
+          <p class="fam manchete">Fraunces</p>
+          <p class="meta"><span>Manchetes, títulos, numerais</span></p>
+        </div>
+        <div>
+          <p class="kicker">Texto</p>
+          <p class="fam" style="font-family:var(--ff-texto)">Source Serif 4</p>
+          <p class="meta"><span>Corpo do artigo, linha fina</span></p>
+        </div>
+        <div>
+          <p class="kicker">Interface</p>
+          <p class="fam" style="font-family:var(--ff-ui)">Instrument Sans</p>
+          <p class="meta"><span>Navegação, rótulos, metadados</span></p>
+        </div>
+      </div>
+      <ul class="escala">
+        {
+          escala.map(([v, nome, tipo]) => (
+            <li>
+              <code>{nome}</code>
+              <span class:list={['amostra-tipo', tipo]} style={`font-size:var(${v})`}>
+                Água potável, norma e mercado
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section>
+      <SecaoCabecalho numero="03" titulo="Espaço" />
+      <ul class="espacos">
+        {
+          espacos.map((v) => (
+            <li>
+              <code>{v}</code>
+              <span class="barra" style={`width:var(${v})`} />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section>
+      <SecaoCabecalho numero="04" titulo="Componentes" href="/" />
+      <div class="comp">
+        <div>
+          <p class="rotulo">Selo</p>
+          <div class="linha">
+            <Selo label="Análise Especial" variante="acc" />
+            <Selo label="Guia Completo" variante="vd" />
+            <Selo label="Review" />
+          </div>
+        </div>
+        <div>
+          <p class="rotulo">Kicker e meta</p>
+          <p class="kicker">Legislação</p>
+          <p class="meta"><span>06 mai</span><span>8 min</span></p>
+        </div>
+        {
+          exemplo && (
+            <>
+              <div>
+                <p class="rotulo">CardPost · padrão</p>
+                <CardPost post={exemplo} resumo />
+              </div>
+              <div>
+                <p class="rotulo">CardPost · texto / compacto</p>
+                <CardPost post={exemplo} variante="texto" />
+                <hr />
+                <CardPost post={exemplo} variante="compacto" />
+              </div>
+              <div class="largo">
+                <p class="rotulo">CardPost · horizontal</p>
+                <CardPost post={exemplo} variante="horizontal" resumo />
+              </div>
+            </>
+          )
+        }
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .ds {
+    display: grid;
+    gap: var(--sp-8);
+    padding-top: var(--sp-7);
+  }
+  .cab .manchete {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-mega);
+  }
+  .cab em {
+    font-weight: 300;
+    color: var(--c-acento);
+  }
+  .intro {
+    max-width: 44rem;
+    margin-top: var(--sp-4);
+    font-family: var(--ff-texto);
+    font-size: var(--fs-corpo);
+    color: var(--c-texto-2);
+  }
+  code {
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-size: 0.8125rem;
+    color: var(--c-texto-3);
+  }
+  .cores {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--sp-5);
+  }
+  .cor {
+    display: grid;
+    gap: var(--sp-1);
+  }
+  .amostra {
+    height: 72px;
+    margin-bottom: var(--sp-2);
+    border: var(--filete) solid var(--c-filete);
+    border-radius: var(--raio);
+  }
+  .familias {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-6);
+    margin-bottom: var(--sp-6);
+  }
+  .fam {
+    margin-block: var(--sp-2);
+    font-size: var(--fs-h2);
+    line-height: 1.1;
+  }
+  .escala {
+    list-style: none;
+    padding: 0;
+  }
+  .escala li {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    align-items: baseline;
+    gap: var(--sp-4);
+    padding-block: var(--sp-3);
+    border-bottom: var(--filete) solid var(--c-filete);
+    overflow: hidden;
+  }
+  .amostra-tipo {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .amostra-tipo.manchete {
+    font-family: var(--ff-display);
+  }
+  .amostra-tipo.titulo {
+    font-family: var(--ff-display);
+  }
+  .amostra-tipo.texto {
+    font-family: var(--ff-texto);
+  }
+  .espacos {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-2);
+  }
+  .espacos li {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    align-items: center;
+  }
+  .barra {
+    height: 12px;
+    background: var(--c-acento);
+  }
+  .comp {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-7) var(--sp-6);
+  }
+  .largo {
+    grid-column: 1 / -1;
+  }
+  .rotulo {
+    margin-bottom: var(--sp-3);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px dashed var(--c-filete);
+    font-size: var(--fs-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-texto-3);
+  }
+  .linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+  hr {
+    margin-block: var(--sp-4);
+    border: 0;
+    border-top: var(--filete) solid var(--c-filete);
+  }
+  @media (max-width: 760px) {
+    .familias,
+    .comp {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

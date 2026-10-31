@@ -1,0 +1,35 @@
+---
+interface Props {
+  label: string
+  variante?: string
+}
+const { label, variante = 'padrao' } = Astro.props
+// Variantes antigas do frontmatter (acc, vd, az, az3) mapeadas para o novo sistema
+const tom = variante === 'acc' ? 'destaque' : variante === 'vd' ? 'guia' : 'padrao'
+---
+
+<span class:list={['selo', tom]}>{label}</span>
+
+<style>
+  .selo {
+    display: inline-block;
+    padding: 0.2em 0.6em 0.15em;
+    font-family: var(--ff-ui);
+    font-size: var(--fs-micro);
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    border: var(--filete) solid currentColor;
+    border-radius: var(--raio);
+    color: var(--c-texto-2);
+  }
+  .destaque {
+    background: var(--c-acento);
+    border-color: var(--c-acento);
+    color: var(--c-sobre-acento);
+  }
+  .guia {
+    color: var(--c-ok);
+  }
+</style>

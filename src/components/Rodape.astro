@@ -1,0 +1,149 @@
+---
+import { CATEGORIAS, type Categoria } from '@/lib/site'
+
+const colunas = [
+  {
+    titulo: 'Editorias',
+    links: (Object.keys(CATEGORIAS) as Categoria[]).map((c) => ({ label: CATEGORIAS[c].label, href: `/${c}` })),
+  },
+  {
+    titulo: 'Normas',
+    links: ['NBR 13713', 'INMETRO', 'ANVISA', 'Portarias MS', 'ISO 9001'].map((label) => ({ label, href: '/legislacao' })),
+  },
+  {
+    titulo: 'Contato',
+    links: [
+      { label: 'redacao@portalbebedouro.com.br', href: 'mailto:redacao@portalbebedouro.com.br' },
+      { label: 'comercial@portalbebedouro.com.br', href: 'mailto:comercial@portalbebedouro.com.br' },
+      { label: 'Instagram', href: '#' },
+      { label: 'LinkedIn', href: '#' },
+      { label: 'YouTube', href: '#' },
+    ],
+  },
+]
+const parceiros = ['JG Bebedouros', 'Ozean Purificadores', 'ABNT', 'INMETRO', 'AquaTech']
+---
+
+<footer class="rodape">
+  <div class="container">
+    <div class="topo">
+      <a href="/" class="logo">Portal <em>do</em> Bebedouro</a>
+      <p class="sobre">
+        Jornalismo sobre o setor de bebedouros e purificadores: normas, mercado, saúde da água e testes de produto.
+      </p>
+    </div>
+    <div class="colunas">
+      {
+        colunas.map((col) => (
+          <nav aria-label={col.titulo}>
+            <h2>{col.titulo}</h2>
+            <ul>
+              {col.links.map((l) => (
+                <li>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+    <div class="base">
+      <p>Parceiros: {parceiros.join(' · ')}</p>
+      <p>© {new Date().getFullYear()} Portal do Bebedouro. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    margin-top: var(--sp-9);
+    padding-block: var(--sp-8) var(--sp-6);
+    border-top: 2px solid var(--c-filete-forte);
+  }
+  :global(#conteudo:has(.newsletter)) + .rodape {
+    margin-top: 0;
+    border-top: 0;
+  }
+  .topo {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--sp-7);
+    align-items: end;
+    padding-bottom: var(--sp-6);
+    border-bottom: var(--filete) solid var(--c-filete);
+  }
+  .logo {
+    font-family: var(--ff-display);
+    font-size: var(--fs-h2);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .logo em {
+    font-weight: 300;
+    color: var(--c-acento);
+  }
+  .sobre {
+    max-width: 34rem;
+    justify-self: end;
+    font-family: var(--ff-texto);
+    color: var(--c-texto-2);
+  }
+  .colunas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-6);
+    padding-block: var(--sp-6);
+  }
+  h2 {
+    margin-bottom: var(--sp-3);
+    font-size: var(--fs-micro);
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-2);
+  }
+  ul a {
+    color: var(--c-texto-2);
+    overflow-wrap: anywhere;
+    transition: color var(--dur);
+  }
+  ul a:hover {
+    color: var(--c-acento);
+  }
+  .base {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-top: var(--sp-5);
+    border-top: var(--filete) solid var(--c-filete);
+    font-size: var(--fs-meta);
+    color: var(--c-texto-3);
+  }
+
+  @media (max-width: 860px) {
+    .topo {
+      grid-template-columns: 1fr;
+      gap: var(--sp-4);
+    }
+    .sobre {
+      justify-self: start;
+    }
+    .colunas {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-6) var(--sp-4);
+    }
+    .colunas nav:last-child {
+      grid-column: 1 / -1;
+    }
+    .base {
+      flex-direction: column;
+    }
+  }
+</style>

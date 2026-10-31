@@ -1,0 +1,397 @@
+---
+import Base from '@/layouts/Base.astro'
+import CardPost from '@/components/CardPost.astro'
+import Selo from '@/components/Selo.astro'
+import SecaoCabecalho from '@/components/SecaoCabecalho.astro'
+import Lateral from '@/components/Lateral.astro'
+import Newsletter from '@/components/Newsletter.astro'
+import { CATEGORIAS } from '@/lib/site'
+import { getPosts, byCategoria, featuredOf, url, dataLonga, dataCurta } from '@/lib/posts'
+
+const posts = await getPosts()
+const lead = featuredOf(posts)
+const resto = posts.filter((p) => p.id !== lead?.id)
+const secundarias = resto.slice(0, 4)
+const faixa = resto.slice(4, 8)
+
+const guias = byCategoria(posts, 'guias')
+const legislacao = byCategoria(posts, 'legislacao')
+const saude = byCategoria(posts, 'saude')
+const reviews = byCategoria(posts, 'reviews')
+const eventos = byCategoria(posts, 'eventos')
+---
+
+<Base>
+  {
+    !lead ? (
+      <p class="container vazio">Nenhum artigo publicado ainda.</p>
+    ) : (
+      <>
+        {/* ---------- Primeira página ---------- */}
+        <section class="container primeira" aria-label="Destaques">
+          <article class="lead surgir">
+            <a href={url(lead)}>
+              <div class="foto lead-foto">
+                {lead.data.ogImage && (
+                  <img src={lead.data.ogImage} alt="" width="1200" height="750" fetchpriority="high" />
+                )}
+              </div>
+              <div class="lead-texto">
+                <div class="lead-topo">
+                  <span class="kicker">{CATEGORIAS[lead.data.categoria].label}</span>
+                  {lead.data.badge && <Selo label={lead.data.badge} variante={lead.data.badgeVariant} />}
+                </div>
+                <h2 class="manchete">
+                  <span class="link-titulo">{lead.data.title}</span>
+                </h2>
+                <p class="linha-fina">{lead.data.excerpt}</p>
+                <p class="meta">
+                  <span>{lead.data.author}</span>
+                  <time datetime={lead.data.date.toISOString()}>{dataLonga(lead.data.date)}</time>
+                  <span>{lead.data.readTime} min de leitura</span>
+                </p>
+              </div>
+            </a>
+          </article>
+
+          <div class="secundarias">
+            {secundarias.map((p, i) => (
+              <div class="surgir" style={`--i:${i + 1}`}>
+                <CardPost post={p} variante={i === 0 ? 'padrao' : 'texto'} resumo={i === 0} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {faixa.length > 0 && (
+          <section class="container faixa" aria-label="Também nesta edição">
+            <p class="faixa-rotulo">Também nesta edição</p>
+            <div class="faixa-grade">
+              {faixa.map((p) => (
+                <CardPost post={p} variante="compacto" />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ---------- Corpo + lateral ---------- */}
+        <div class="container corpo">
+          <main class="principal">
+            <section>
+              <SecaoCabecalho numero="01" titulo="Últimas" />
+              <ol class="ultimas">
+                {posts.slice(0, 6).map((p) => (
+                  <li>
+                    <time datetime={p.data.date.toISOString()}>{dataCurta(p.data.date)}</time>
+                    <a href={url(p)}>
+                      <span class="kicker">{CATEGORIAS[p.data.categoria].curto}</span>
+                      <span class="titulo link-titulo">{p.data.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            {guias.length > 0 && (
+              <section>
+                <SecaoCabecalho numero="02" titulo={CATEGORIAS.guias.label} href="/guias" />
+                <div class="grade-2">
+                  {guias.slice(0, 2).map((p) => (
+                    <CardPost post={p} resumo />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {legislacao.length > 0 && (
+              <section>
+                <SecaoCabecalho numero="03" titulo={CATEGORIAS.legislacao.label} href="/legislacao" />
+                <div class="pilha">
+                  {legislacao.slice(0, 3).map((p) => (
+                    <CardPost post={p} variante="horizontal" resumo />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {saude.length > 0 && (
+              <section>
+                <SecaoCabecalho numero="04" titulo={CATEGORIAS.saude.label} href="/saude" />
+                <div class="grade-2">
+                  {saude.slice(0, 2).map((p) => (
+                    <CardPost post={p} resumo />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {reviews.length > 0 && (
+              <section>
+                <SecaoCabecalho numero="05" titulo={CATEGORIAS.reviews.label} href="/reviews" />
+                <div class="grade-2">
+                  {reviews.slice(0, 2).map((p) => (
+                    <CardPost post={p} resumo />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {eventos.length > 0 && (
+              <section>
+                <SecaoCabecalho numero="06" titulo={CATEGORIAS.eventos.label} href="/eventos" />
+                <ul class="agenda">
+                  {eventos.slice(0, 4).map((p) => {
+                    const [dia, mes] = dataCurta(p.data.date).split(' ')
+                    return (
+                      <li>
+                        <a href={url(p)}>
+                          <span class="data">
+                            <span class="dia">{dia}</span>
+                            <span class="mes">{mes}</span>
+                          </span>
+                          <span>
+                            <span class="titulo link-titulo">{p.data.title}</span>
+                            <span class="resumo clamp-2">{p.data.excerpt}</span>
+                          </span>
+                        </a>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </section>
+            )}
+          </main>
+
+          <Lateral posts={posts} />
+        </div>
+
+        <Newsletter />
+      </>
+    )
+  }
+</Base>
+
+<style>
+  .vazio {
+    padding-block: var(--sp-9);
+    text-align: center;
+    color: var(--c-texto-3);
+  }
+
+  /* Primeira página */
+  .primeira {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: var(--sp-7);
+    padding-top: var(--sp-6);
+  }
+  .lead-foto {
+    aspect-ratio: 16 / 10;
+  }
+  .lead-texto {
+    padding-top: var(--sp-5);
+  }
+  .lead-topo {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-3);
+  }
+  .lead .manchete {
+    font-size: var(--fs-h1);
+  }
+  .linha-fina {
+    margin-top: var(--sp-4);
+    max-width: 40rem;
+    font-family: var(--ff-texto);
+    font-size: var(--fs-corpo);
+    line-height: 1.5;
+    color: var(--c-texto-2);
+  }
+  .lead .meta {
+    margin-top: var(--sp-4);
+  }
+  .secundarias {
+    display: grid;
+    align-content: start;
+    gap: var(--sp-5);
+    padding-left: var(--sp-7);
+    border-left: var(--filete) solid var(--c-filete);
+  }
+  .secundarias > * + * {
+    padding-top: var(--sp-5);
+    border-top: var(--filete) solid var(--c-filete);
+  }
+
+  /* Faixa */
+  .faixa {
+    margin-top: var(--sp-7);
+  }
+  .faixa-rotulo {
+    padding-block: var(--sp-2);
+    border-block: var(--filete) solid var(--c-filete-forte);
+    font-size: var(--fs-micro);
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .faixa-grade {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-block: var(--sp-5);
+    border-bottom: var(--filete) solid var(--c-filete);
+  }
+  .faixa-grade > :global(*) {
+    padding-inline: var(--sp-5);
+    border-left: var(--filete) solid var(--c-filete);
+  }
+  .faixa-grade > :global(:first-child) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  /* Corpo */
+  .corpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--lateral);
+    gap: var(--sp-8);
+    margin-top: var(--sp-8);
+  }
+  .principal {
+    display: grid;
+    gap: var(--sp-8);
+    align-content: start;
+  }
+  .grade-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-6);
+  }
+  .pilha {
+    display: grid;
+    gap: var(--sp-5);
+  }
+  .pilha > :global(* + *) {
+    padding-top: var(--sp-5);
+    border-top: var(--filete) solid var(--c-filete);
+  }
+
+  /* Últimas */
+  .ultimas {
+    list-style: none;
+    padding: 0;
+  }
+  .ultimas li {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: var(--sp-4);
+    padding-block: var(--sp-4);
+    border-bottom: var(--filete) solid var(--c-filete);
+  }
+  .ultimas li:first-child {
+    padding-top: 0;
+  }
+  .ultimas time {
+    padding-top: 0.15rem;
+    font-size: var(--fs-meta);
+    color: var(--c-texto-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .ultimas a {
+    display: grid;
+    gap: var(--sp-1);
+  }
+  .ultimas .titulo {
+    font-size: var(--fs-h5);
+  }
+
+  /* Agenda */
+  .agenda {
+    list-style: none;
+    padding: 0;
+  }
+  .agenda a {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: var(--sp-5);
+    padding-block: var(--sp-4);
+    border-bottom: var(--filete) solid var(--c-filete);
+  }
+  .agenda li:first-child a {
+    padding-top: 0;
+  }
+  .data {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    aspect-ratio: 1;
+    border: var(--filete) solid var(--c-filete-forte);
+    border-radius: var(--raio);
+  }
+  .dia {
+    font-family: var(--ff-display);
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+  .mes {
+    font-size: var(--fs-micro);
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-acento);
+  }
+  .agenda .titulo {
+    display: block;
+    font-size: var(--fs-h4);
+  }
+  .agenda .resumo {
+    margin-top: var(--sp-1);
+    font-family: var(--ff-texto);
+    color: var(--c-texto-2);
+  }
+
+  @media (max-width: 1024px) {
+    .corpo {
+      grid-template-columns: 1fr;
+    }
+    .faixa-grade {
+      grid-template-columns: 1fr 1fr;
+      row-gap: var(--sp-5);
+    }
+    .faixa-grade > :global(:nth-child(3)) {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .primeira {
+      grid-template-columns: 1fr;
+      gap: var(--sp-6);
+      padding-top: var(--sp-5);
+    }
+    .secundarias {
+      padding-left: 0;
+      border-left: 0;
+      padding-top: var(--sp-5);
+      border-top: 2px solid var(--c-filete-forte);
+    }
+    .grade-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .faixa-grade {
+      grid-template-columns: 1fr;
+    }
+    .faixa-grade > :global(*) {
+      padding-inline: 0;
+      border-left: 0;
+    }
+    .faixa-grade > :global(* + *) {
+      padding-top: var(--sp-5);
+      border-top: var(--filete) solid var(--c-filete);
+    }
+  }
+</style>

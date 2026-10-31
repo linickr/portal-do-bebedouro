@@ -1,0 +1,49 @@
+---
+import Base from '@/layouts/Base.astro'
+---
+
+<Base title="Página não encontrada" noindex>
+  <section class="container nf">
+    <p class="numero">404</p>
+    <h1 class="manchete">Esta página secou.</h1>
+    <p class="texto">O conteúdo que você procura não existe ou foi removido.</p>
+    <a href="/" class="voltar">Voltar para a primeira página <span aria-hidden="true">→</span></a>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: var(--sp-9);
+    text-align: center;
+  }
+  .numero {
+    font-family: var(--ff-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(6rem, 3rem + 14vw, 14rem);
+    line-height: 0.9;
+    color: var(--c-acento);
+  }
+  .manchete {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-h2);
+  }
+  .texto {
+    margin-top: var(--sp-3);
+    font-family: var(--ff-texto);
+    color: var(--c-texto-2);
+  }
+  .voltar {
+    display: inline-block;
+    margin-top: var(--sp-6);
+    padding: var(--sp-3) var(--sp-5);
+    background: var(--c-texto);
+    color: var(--c-fundo);
+    border-radius: var(--raio);
+    font-weight: 650;
+    transition: background var(--dur);
+  }
+  .voltar:hover {
+    background: var(--c-acento);
+  }
+</style>

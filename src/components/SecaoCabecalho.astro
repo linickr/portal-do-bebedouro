@@ -1,0 +1,58 @@
+---
+interface Props {
+  numero?: string
+  titulo: string
+  href?: string
+}
+const { numero, titulo, href } = Astro.props
+---
+
+<header class="secao-cab">
+  {numero && <span class="num">{numero}</span>}
+  <h2 class="titulo">{titulo}</h2>
+  <span class="linha" aria-hidden="true"></span>
+  {href && <a href={href} class="ver">Ver tudo <span aria-hidden="true">→</span></a>}
+</header>
+
+<style>
+  .secao-cab {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-5);
+    padding-top: var(--sp-3);
+    border-top: 2px solid var(--c-filete-forte);
+  }
+  .num {
+    font-family: var(--ff-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: var(--fs-h4);
+    color: var(--c-acento);
+  }
+  h2 {
+    font-size: var(--fs-h3);
+  }
+  .linha {
+    flex: 1;
+  }
+  .ver {
+    flex-shrink: 0;
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-texto-2);
+    transition: color var(--dur);
+  }
+  .ver:hover {
+    color: var(--c-acento);
+  }
+  .ver span {
+    display: inline-block;
+    transition: transform var(--dur) var(--ease);
+  }
+  .ver:hover span {
+    transform: translateX(3px);
+  }
+</style>

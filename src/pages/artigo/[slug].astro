@@ -1,0 +1,318 @@
+---
+import type { GetStaticPaths } from 'astro'
+import { render } from 'astro:content'
+import Base from '@/layouts/Base.astro'
+import Selo from '@/components/Selo.astro'
+import CardPost from '@/components/CardPost.astro'
+import Lateral from '@/components/Lateral.astro'
+import Comentarios from '@/components/Comentarios.astro'
+import { CATEGORIAS } from '@/lib/site'
+import { getPosts, dataLonga, type Post } from '@/lib/posts'
+import { articleSchema } from '@/lib/seo'
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts()
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }))
+}) satisfies GetStaticPaths
+
+const { post } = Astro.props as { post: Post }
+const { data } = post
+const { Content } = await render(post)
+
+const todos = await getPosts()
+const relacionados = todos.filter((p) => p.id !== post.id && p.data.categoria === data.categoria).slice(0, 3)
+const cat = CATEGORIAS[data.categoria]
+---
+
+<Base
+  title={data.title}
+  description={data.excerpt}
+  image={data.ogImage}
+  type="article"
+  publishedTime={data.date}
+  schema={articleSchema(post)}
+>
+  <article>
+    <header class="container cab">
+      <nav class="trilha" aria-label="Trilha">
+        <a href="/">Início</a>
+        <span aria-hidden="true">/</span>
+        <a href={`/${data.categoria}`} class="kicker">{cat.label}</a>
+        {data.badge && <Selo label={data.badge} variante={data.badgeVariant} />}
+      </nav>
+      <h1 class="manchete surgir">{data.title}</h1>
+      <p class="linha-fina surgir" style="--i:1">{data.excerpt}</p>
+      <div class="assinatura surgir" style="--i:2">
+        <p class="autor">Por <strong>{data.author}</strong></p>
+        <p class="meta">
+          <time datetime={data.date.toISOString()}>{dataLonga(data.date)}</time>
+          {data.updatedAt && <span>Atualizado em {dataLonga(data.updatedAt)}</span>}
+          <span>{data.readTime} min de leitura</span>
+        </p>
+      </div>
+    </header>
+
+    {
+      data.ogImage && (
+        <figure class="container capa">
+          <div class="foto">
+            <img src={data.ogImage} alt={data.title} width="1600" height="800" fetchpriority="high" />
+          </div>
+        </figure>
+      )
+    }
+
+    <div class="container corpo">
+      <div class="texto">
+        <div class="prosa">
+          <Content />
+        </div>
+
+        {
+          data.tags.length > 0 && (
+            <ul class="tags" aria-label="Assuntos">
+              {data.tags.map((t) => (
+                <li>{t}</li>
+              ))}
+            </ul>
+          )
+        }
+
+        {
+          relacionados.length > 0 && (
+            <section class="relacionados" aria-labelledby="rel-titulo">
+              <h2 id="rel-titulo" class="titulo">Leia também em {cat.label}</h2>
+              <div class="rel-grade">
+                {relacionados.map((p) => (
+                  <CardPost post={p} />
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        <Comentarios />
+      </div>
+      <Lateral posts={todos} />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .cab {
+    max-width: calc(56rem + 2 * var(--gutter));
+    padding-block: var(--sp-7) var(--sp-6);
+  }
+  .trilha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-5);
+    font-size: var(--fs-meta);
+    color: var(--c-texto-3);
+  }
+  .trilha a:hover {
+    color: var(--c-acento);
+  }
+  .manchete {
+    font-size: var(--fs-h1);
+  }
+  .linha-fina {
+    margin-top: var(--sp-5);
+    font-family: var(--ff-texto);
+    font-size: clamp(1.1875rem, 1rem + 0.8vw, 1.5rem);
+    font-style: italic;
+    line-height: 1.45;
+    color: var(--c-texto-2);
+  }
+  .assinatura {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--sp-2) var(--sp-5);
+    margin-top: var(--sp-6);
+    padding-block: var(--sp-3);
+    border-block: var(--filete) solid var(--c-filete);
+  }
+  .autor {
+    font-size: var(--fs-meta);
+  }
+
+  .capa .foto {
+    aspect-ratio: 2 / 1;
+  }
+
+  .corpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--lateral);
+    gap: var(--sp-8);
+    margin-top: var(--sp-7);
+  }
+  .texto {
+    max-width: var(--leitura);
+  }
+
+  /* ---------- Prosa (corpo do artigo) ---------- */
+  .prosa {
+    font-family: var(--ff-texto);
+    font-size: var(--fs-corpo);
+    font-variation-settings: 'opsz' 20;
+    line-height: 1.7;
+    color: var(--c-texto-2);
+    hanging-punctuation: first;
+  }
+  .prosa :global(> * + *) {
+    margin-top: 1.25em;
+  }
+  .prosa :global(> p:first-of-type::first-letter) {
+    float: left;
+    margin: 0.06em 0.1em 0 0;
+    font-family: var(--ff-display);
+    font-size: 4.4em;
+    font-weight: 600;
+    font-variation-settings: 'opsz' 144;
+    line-height: 0.8;
+    color: var(--c-acento);
+  }
+  .prosa :global(h2) {
+    margin-top: 2em;
+    font-family: var(--ff-display);
+    font-size: var(--fs-h3);
+    font-weight: 560;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--c-texto);
+    text-wrap: balance;
+  }
+  .prosa :global(h3) {
+    margin-top: 1.75em;
+    font-family: var(--ff-display);
+    font-size: var(--fs-h4);
+    font-weight: 560;
+    color: var(--c-texto);
+  }
+  .prosa :global(h2 + *),
+  .prosa :global(h3 + *) {
+    margin-top: 0.6em;
+  }
+  .prosa :global(strong) {
+    font-weight: 650;
+    color: var(--c-texto);
+  }
+  .prosa :global(a) {
+    color: var(--c-acento);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .prosa :global(ul),
+  .prosa :global(ol) {
+    padding-left: 1.25em;
+  }
+  .prosa :global(li + li) {
+    margin-top: 0.4em;
+  }
+  .prosa :global(li::marker) {
+    color: var(--c-acento);
+  }
+  .prosa :global(blockquote) {
+    margin-block: 2em;
+    padding-left: var(--sp-5);
+    border-left: 3px solid var(--c-acento);
+    font-family: var(--ff-display);
+    font-size: var(--fs-h4);
+    font-style: italic;
+    line-height: 1.35;
+    color: var(--c-texto);
+  }
+  .prosa :global(hr) {
+    margin-block: 2.5em;
+    border: 0;
+    text-align: center;
+  }
+  .prosa :global(hr::after) {
+    content: '• • •';
+    letter-spacing: 1em;
+    color: var(--c-texto-3);
+  }
+  .prosa :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--ff-ui);
+    font-size: var(--fs-ui);
+    font-variant-numeric: tabular-nums;
+  }
+  .prosa :global(th) {
+    text-align: left;
+    font-size: var(--fs-micro);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--c-filete-forte);
+  }
+  .prosa :global(th),
+  .prosa :global(td) {
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) 0;
+  }
+  .prosa :global(td) {
+    border-bottom: var(--filete) solid var(--c-filete);
+  }
+  .prosa :global(img) {
+    border-radius: var(--raio);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-top: var(--sp-7);
+    list-style: none;
+    padding: 0;
+  }
+  .tags li {
+    padding: var(--sp-1) var(--sp-3);
+    border: var(--filete) solid var(--c-filete);
+    border-radius: 999px;
+    font-size: var(--fs-meta);
+    color: var(--c-texto-2);
+  }
+
+  .relacionados {
+    margin-top: var(--sp-8);
+    padding-top: var(--sp-4);
+    border-top: 2px solid var(--c-filete-forte);
+  }
+  .relacionados h2 {
+    font-size: var(--fs-h3);
+    margin-bottom: var(--sp-5);
+  }
+  .rel-grade {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-5);
+  }
+  .rel-grade :global(.titulo) {
+    font-size: var(--fs-h5);
+  }
+
+  @media (max-width: 1024px) {
+    .corpo {
+      grid-template-columns: 1fr;
+    }
+    .texto {
+      max-width: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .capa {
+      padding-inline: 0;
+    }
+    .capa .foto {
+      aspect-ratio: 3 / 2;
+      border-radius: 0;
+    }
+    .rel-grade {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

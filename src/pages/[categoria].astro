@@ -1,0 +1,97 @@
+---
+import type { GetStaticPaths } from 'astro'
+import Base from '@/layouts/Base.astro'
+import CardPost from '@/components/CardPost.astro'
+import Lateral from '@/components/Lateral.astro'
+import { CATEGORIAS, type Categoria } from '@/lib/site'
+import { getPosts, byCategoria } from '@/lib/posts'
+
+export const getStaticPaths = (() =>
+  (Object.keys(CATEGORIAS) as Categoria[]).map((categoria) => ({ params: { categoria } }))) satisfies GetStaticPaths
+
+const categoria = Astro.params.categoria as Categoria
+const info = CATEGORIAS[categoria]
+const todos = await getPosts()
+const posts = byCategoria(todos, categoria)
+const [primeiro, ...demais] = posts
+---
+
+<Base title={info.label} description={info.descricao}>
+  <header class="container cab">
+    <p class="kicker">Editoria</p>
+    <h1 class="manchete">{info.label}</h1>
+    <p class="desc">{info.descricao}</p>
+    <p class="meta"><span>{posts.length} {posts.length === 1 ? 'artigo' : 'artigos'}</span></p>
+  </header>
+
+  <div class="container corpo">
+    <main>
+      {
+        !primeiro ? (
+          <p class="vazio">Nenhum artigo nesta editoria ainda.</p>
+        ) : (
+          <>
+            <CardPost post={primeiro} variante="horizontal" nivel="h2" resumo />
+            {demais.length > 0 && (
+              <div class="grade">
+                {demais.map((p) => (
+                  <CardPost post={p} nivel="h2" resumo />
+                ))}
+              </div>
+            )}
+          </>
+        )
+      }
+    </main>
+    <Lateral posts={todos} />
+  </div>
+</Base>
+
+<style>
+  .cab {
+    padding-block: var(--sp-7) var(--sp-6);
+    border-bottom: 2px solid var(--c-filete-forte);
+    margin-bottom: var(--sp-6);
+  }
+  .cab .manchete {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-mega);
+  }
+  .desc {
+    max-width: 36rem;
+    margin-top: var(--sp-4);
+    font-family: var(--ff-texto);
+    font-style: italic;
+    font-size: var(--fs-corpo);
+    color: var(--c-texto-2);
+  }
+  .cab .meta {
+    margin-top: var(--sp-3);
+  }
+  .corpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--lateral);
+    gap: var(--sp-8);
+  }
+  .grade {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-7) var(--sp-6);
+    margin-top: var(--sp-6);
+    padding-top: var(--sp-6);
+    border-top: var(--filete) solid var(--c-filete);
+  }
+  .vazio {
+    color: var(--c-texto-3);
+  }
+  @media (max-width: 1024px) {
+    .corpo {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .grade {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

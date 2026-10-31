@@ -1,0 +1,352 @@
+---
+import { NAV, PAUTA } from '@/lib/site'
+
+const path = Astro.url.pathname
+const hoje = new Intl.DateTimeFormat('pt-BR', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'America/Sao_Paulo',
+}).format(new Date())
+const isHome = path === '/'
+---
+
+<header class="masthead">
+  <div class="container utilidades">
+    <span class="hoje" data-hoje>{hoje}</span>
+    <nav class="links-util" aria-label="Institucional">
+      <a href="/#newsletter">Newsletter</a>
+      <a href="mailto:comercial@portalbebedouro.com.br">Anuncie</a>
+      <button class="tema" type="button" aria-label="Alternar tema claro/escuro" data-tema>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+          <path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"></path>
+        </svg>
+      </button>
+    </nav>
+  </div>
+
+  <div class="container marca">
+    <a href="/" class="logo" aria-label="Portal do Bebedouro — página inicial">
+      {isHome ? <h1 class="logo-texto">Portal <em>do</em> Bebedouro</h1> : <span class="logo-texto">Portal <em>do</em> Bebedouro</span>}
+    </a>
+    <p class="lema">O jornal do setor de bebedouros e purificadores no Brasil</p>
+  </div>
+
+  <nav class="barra" aria-label="Editorias">
+    <div class="container barra-interna">
+      <a href="/" class="logo-mini" aria-label="Página inicial">P<em>d</em>B</a>
+      <ul class="editorias" id="menu">
+        <li><a href="/" aria-current={isHome ? 'page' : undefined}>Início</a></li>
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <button class="abrir" type="button" aria-controls="menu" aria-expanded="false" data-menu>
+        <span>Editorias</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="pauta" aria-label="Em pauta">
+    <div class="container pauta-interna">
+      <span class="pauta-rotulo">Em pauta</span>
+      <div class="pauta-trilho">
+        <ul class="pauta-faixa">
+          {PAUTA.map((item) => <li>{item}</li>)}
+          {PAUTA.map((item) => <li aria-hidden="true">{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // A página é estática: atualiza a data no navegador do leitor
+  const hoje = document.querySelector('[data-hoje]')
+  if (hoje) {
+    hoje.textContent = new Intl.DateTimeFormat('pt-BR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date())
+  }
+
+  const btnMenu = document.querySelector<HTMLButtonElement>('[data-menu]')
+  const menu = document.getElementById('menu')
+  btnMenu?.addEventListener('click', () => {
+    const aberto = btnMenu.getAttribute('aria-expanded') === 'true'
+    btnMenu.setAttribute('aria-expanded', String(!aberto))
+    menu?.classList.toggle('aberto', !aberto)
+  })
+
+  document.querySelector('[data-tema]')?.addEventListener('click', () => {
+    const root = document.documentElement
+    const atual =
+      root.dataset.theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    const novo = atual === 'dark' ? 'light' : 'dark'
+    root.dataset.theme = novo
+    try {
+      localStorage.setItem('tema', novo)
+    } catch {}
+  })
+</script>
+
+<style>
+  .utilidades {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--sp-3);
+    font-size: var(--fs-meta);
+    color: var(--c-texto-3);
+  }
+  .hoje::first-letter {
+    text-transform: uppercase;
+  }
+  .links-util {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-5);
+  }
+  .links-util a:hover {
+    color: var(--c-acento);
+  }
+  .tema {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: var(--filete) solid var(--c-filete);
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+    transition: border-color var(--dur), color var(--dur);
+  }
+  .tema:hover {
+    border-color: var(--c-acento);
+    color: var(--c-acento);
+  }
+
+  /* Marca */
+  .marca {
+    text-align: center;
+    padding-block: var(--sp-4) var(--sp-5);
+    border-top: var(--filete) solid var(--c-filete);
+  }
+  .logo-texto {
+    display: inline-block;
+    font-family: var(--ff-display);
+    font-size: var(--fs-mega);
+    font-weight: 600;
+    font-variation-settings: 'opsz' 144, 'SOFT' 0, 'WONK' 1;
+    letter-spacing: -0.035em;
+    line-height: 0.95;
+  }
+  .logo-texto em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--c-acento);
+  }
+  .lema {
+    margin-top: var(--sp-3);
+    font-family: var(--ff-texto);
+    font-style: italic;
+    font-size: var(--fs-ui);
+    color: var(--c-texto-3);
+  }
+
+  /* Barra de editorias */
+  .barra {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--c-fundo) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-block: var(--filete) solid var(--c-filete-forte);
+    box-shadow: 0 3px 0 -2px var(--c-filete-forte);
+  }
+  .barra-interna {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+  }
+  .logo-mini {
+    display: none;
+    font-family: var(--ff-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .logo-mini em {
+    font-weight: 300;
+    color: var(--c-acento);
+  }
+  .editorias {
+    display: flex;
+    list-style: none;
+    padding: 0;
+  }
+  .editorias a {
+    position: relative;
+    display: block;
+    padding: var(--sp-3) var(--sp-4);
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-texto-2);
+    transition: color var(--dur);
+  }
+  .editorias a::after {
+    content: '';
+    position: absolute;
+    left: var(--sp-4);
+    right: var(--sp-4);
+    bottom: 6px;
+    height: 2px;
+    background: var(--c-acento);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur) var(--ease);
+  }
+  .editorias a:hover,
+  .editorias a[aria-current='page'] {
+    color: var(--c-texto);
+  }
+  .editorias a:hover::after,
+  .editorias a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+  .abrir {
+    display: none;
+    align-items: center;
+    gap: var(--sp-2);
+    background: none;
+    border: 0;
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  /* Em pauta */
+  .pauta {
+    border-bottom: var(--filete) solid var(--c-filete);
+    font-size: var(--fs-meta);
+  }
+  .pauta-interna {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding-block: var(--sp-2);
+  }
+  .pauta-rotulo {
+    flex-shrink: 0;
+    font-weight: 650;
+    font-size: var(--fs-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-acento);
+  }
+  .pauta-rotulo::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: var(--sp-2);
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: 1px;
+    animation: pulso 2s ease-in-out infinite;
+  }
+  .pauta-trilho {
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  }
+  .pauta-faixa {
+    display: flex;
+    width: max-content;
+    list-style: none;
+    padding: 0;
+    color: var(--c-texto-2);
+    animation: rolar 60s linear infinite;
+  }
+  .pauta-faixa li {
+    padding-right: var(--sp-7);
+    white-space: nowrap;
+  }
+  .pauta-faixa li::before {
+    content: '—';
+    margin-right: var(--sp-3);
+    color: var(--c-texto-3);
+  }
+  .pauta-trilho:hover .pauta-faixa {
+    animation-play-state: paused;
+  }
+  @keyframes rolar {
+    to { transform: translateX(-50%); }
+  }
+  @keyframes pulso {
+    50% { opacity: 0.3; }
+  }
+
+  @media (max-width: 860px) {
+    .utilidades .hoje {
+      display: none;
+    }
+    .utilidades {
+      justify-content: flex-end;
+    }
+    .marca {
+      padding-block: var(--sp-3) var(--sp-4);
+    }
+    .lema {
+      display: none;
+    }
+    .barra-interna {
+      justify-content: space-between;
+    }
+    .logo-mini,
+    .abrir {
+      display: flex;
+    }
+    .editorias {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: var(--c-fundo);
+      border-bottom: var(--filete) solid var(--c-filete-forte);
+      padding: var(--sp-2) var(--gutter) var(--sp-4);
+    }
+    .editorias.aberto {
+      display: flex;
+    }
+    .editorias a {
+      padding: var(--sp-3) 0;
+      font-size: var(--fs-ui);
+      border-bottom: var(--filete) solid var(--c-filete);
+    }
+    .editorias a::after {
+      display: none;
+    }
+    .editorias a[aria-current='page'] {
+      color: var(--c-acento);
+    }
+  }
+</style>

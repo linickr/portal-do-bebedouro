@@ -1,0 +1,123 @@
+/*
+ * Portal do Bebedouro — Design System "Jornal da Água"
+ * Camada 1: primitivos  ·  Camada 2: semânticos (o que os componentes usam)
+ */
+
+:root {
+  /* ---------- Primitivos: cor ---------- */
+  --papel-50: #fbf9f4;
+  --papel-100: #f5f1e8;
+  --papel-200: #ebe5d7;
+  --papel-300: #d9d1bf;
+  --tinta-400: #8a8f96;
+  --tinta-500: #5c636b;
+  --tinta-700: #2c343c;
+  --tinta-900: #0f1820;
+  --cobalto-300: #8fb0ff;
+  --cobalto-500: #1f4fd6;
+  --cobalto-600: #1a42b5;
+  --cobalto-700: #133390;
+  --cobalto-50: #e8eeff;
+  --alerta-500: #c2410c;
+  --ok-600: #15803d;
+
+  /* ---------- Primitivos: tipografia ---------- */
+  --ff-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --ff-texto: 'Source Serif 4 Variable', Georgia, serif;
+  --ff-ui: 'Instrument Sans Variable', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Escala fluida (min 360px → max 1280px) */
+  --fs-micro: 0.6875rem;                                   /* 11 — rótulos */
+  --fs-meta: 0.8125rem;                                    /* 13 — metadados */
+  --fs-ui: 0.9375rem;                                      /* 15 — interface */
+  --fs-corpo: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);  /* 17→19 — leitura */
+  --fs-h5: 1.1875rem;
+  --fs-h4: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  --fs-h3: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+  --fs-h2: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --fs-h1: clamp(2.375rem, 1.6rem + 3.4vw, 4.25rem);
+  --fs-mega: clamp(3rem, 1.5rem + 6.5vw, 7rem);
+
+  /* ---------- Primitivos: espaço (base 4) ---------- */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+  --sp-9: 6rem;
+
+  /* ---------- Layout ---------- */
+  --largura: 1280px;
+  --leitura: 42rem;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --lateral: 300px;
+
+  --raio: 2px;
+  --filete: 1px;
+  --dur: 180ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* ---------- Semânticos ---------- */
+  --c-fundo: var(--papel-100);
+  --c-superficie: var(--papel-50);
+  --c-superficie-2: var(--papel-200);
+  --c-texto: var(--tinta-900);
+  --c-texto-2: var(--tinta-700);
+  --c-texto-3: var(--tinta-500);
+  --c-filete: var(--papel-300);
+  --c-filete-forte: var(--tinta-900);
+  --c-acento: var(--cobalto-500);
+  --c-acento-hover: var(--cobalto-700);
+  --c-acento-suave: var(--cobalto-50);
+  --c-sobre-acento: #ffffff;
+  --c-invertido: var(--tinta-900);
+  --c-sobre-invertido: var(--papel-100);
+  --c-alerta: var(--alerta-500);
+  --c-ok: var(--ok-600);
+  --c-foco: var(--cobalto-500);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --c-fundo: #0e141a;
+    --c-superficie: #151d25;
+    --c-superficie-2: #1d2731;
+    --c-texto: #ece7dc;
+    --c-texto-2: #c9c4b8;
+    --c-texto-3: #8f949a;
+    --c-filete: #2a3540;
+    --c-filete-forte: #ece7dc;
+    --c-acento: var(--cobalto-300);
+    --c-acento-hover: #b9cdff;
+    --c-acento-suave: #18244a;
+    --c-sobre-acento: #0e141a;
+    --c-invertido: #050a0f;
+    --c-sobre-invertido: #ece7dc;
+    --c-foco: var(--cobalto-300);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --c-fundo: #0e141a;
+  --c-superficie: #151d25;
+  --c-superficie-2: #1d2731;
+  --c-texto: #ece7dc;
+  --c-texto-2: #c9c4b8;
+  --c-texto-3: #8f949a;
+  --c-filete: #2a3540;
+  --c-filete-forte: #ece7dc;
+  --c-acento: var(--cobalto-300);
+  --c-acento-hover: #b9cdff;
+  --c-acento-suave: #18244a;
+  --c-sobre-acento: #0e141a;
+  --c-invertido: #050a0f;
+  --c-sobre-invertido: #ece7dc;
+  --c-foco: var(--cobalto-300);
+  color-scheme: dark;
+}

@@ -1,0 +1,113 @@
+---
+import Selo from './Selo.astro'
+import { CATEGORIAS } from '@/lib/site'
+import { url, dataCurta, type Post } from '@/lib/posts'
+
+interface Props {
+  post: Post
+  variante?: 'padrao' | 'compacto' | 'horizontal' | 'texto'
+  nivel?: 'h2' | 'h3'
+  resumo?: boolean
+}
+
+const { post, variante = 'padrao', nivel = 'h3', resumo = false } = Astro.props
+const { data } = post
+const Tag = nivel
+const comFoto = variante === 'padrao' || variante === 'horizontal'
+---
+
+<article class:list={['card', variante]}>
+  <a href={url(post)} class="card-link">
+    {
+      comFoto && (
+        <div class="foto">
+          {data.ogImage ? (
+            <img src={data.ogImage} alt="" loading="lazy" decoding="async" width="800" height="500" />
+          ) : (
+            <span class="marca-dagua" aria-hidden="true">{CATEGORIAS[data.categoria].curto}</span>
+          )}
+        </div>
+      )
+    }
+    <div class="corpo">
+      <div class="topo">
+        <span class="kicker">{CATEGORIAS[data.categoria].curto}</span>
+        {data.badge && variante !== 'compacto' && <Selo label={data.badge} variante={data.badgeVariant} />}
+      </div>
+      <Tag class="titulo"><span class="link-titulo">{data.title}</span></Tag>
+      {resumo && <p class="resumo clamp-2">{data.excerpt}</p>}
+      <p class="meta">
+        <time datetime={data.date.toISOString()}>{dataCurta(data.date)}</time>
+        <span>{data.readTime} min</span>
+      </p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .card-link {
+    display: grid;
+    gap: var(--sp-3);
+  }
+  .foto {
+    aspect-ratio: 16 / 10;
+  }
+  .marca-dagua {
+    position: absolute;
+    left: var(--sp-4);
+    bottom: var(--sp-2);
+    font-family: var(--ff-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(2.5rem, 2rem + 2vw, 3.75rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: color-mix(in srgb, var(--papel-100) 85%, transparent);
+  }
+  .topo {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-2);
+  }
+  .titulo {
+    font-size: var(--fs-h4);
+  }
+  .resumo {
+    margin-top: var(--sp-2);
+    font-family: var(--ff-texto);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--c-texto-2);
+  }
+  .meta {
+    margin-top: var(--sp-2);
+  }
+
+  .compacto .titulo {
+    font-size: var(--fs-h5);
+  }
+
+  .texto .titulo {
+    font-size: var(--fs-h4);
+  }
+
+  .horizontal .card-link {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: var(--sp-5);
+    align-items: start;
+  }
+  .horizontal .titulo {
+    font-size: var(--fs-h3);
+  }
+
+  @media (max-width: 560px) {
+    .horizontal .card-link {
+      grid-template-columns: 1fr;
+      gap: var(--sp-3);
+    }
+    .horizontal .titulo {
+      font-size: var(--fs-h4);
+    }
+  }
+</style>

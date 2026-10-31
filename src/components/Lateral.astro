@@ -1,0 +1,221 @@
+---
+import { CATEGORIAS, type Categoria } from '@/lib/site'
+import { url, type Post } from '@/lib/posts'
+
+interface Props {
+  posts: Post[]
+}
+const { posts } = Astro.props
+const contagem = (c: Categoria) => posts.filter((p) => p.data.categoria === c).length
+---
+
+<aside class="lateral" aria-label="Destaques e parceiros">
+  <div class="publi">
+    <span class="publi-rotulo">Publicidade</span>
+    <a href="#" rel="sponsored"><img src="/images/banner-jg.png" alt="JG Bebedouros" width="268" height="380" loading="lazy" /></a>
+  </div>
+
+  <section class="bloco">
+    <h2 class="bloco-titulo">Mais lidas</h2>
+    <ol class="mais-lidas">
+      {
+        posts.slice(0, 5).map((post, i) => (
+          <li>
+            <span class="n">{i + 1}</span>
+            <a href={url(post)}>
+              <span class="titulo link-titulo">{post.data.title}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <div class="publi">
+    <span class="publi-rotulo">Publicidade</span>
+    <a href="#" rel="sponsored"><img src="/images/banner-ozean.png" alt="Ozean Purificadores" width="268" height="380" loading="lazy" /></a>
+  </div>
+
+  <section class="bloco carta">
+    <h2 class="bloco-titulo">A Carta da Água</h2>
+    <p>Normas, mercado e saúde da água. Toda segunda, no seu e-mail.</p>
+    <form class="form-mini" data-newsletter>
+      <label class="sr-only" for="email-lateral">Seu e-mail</label>
+      <input id="email-lateral" type="email" required placeholder="seu@email.com" />
+      <button type="submit">Assinar</button>
+    </form>
+  </section>
+
+  <section class="bloco">
+    <h2 class="bloco-titulo">Editorias</h2>
+    <ul class="editorias">
+      {
+        (Object.keys(CATEGORIAS) as Categoria[]).map((c) => (
+          <li>
+            <a href={`/${c}`}>
+              <span>{CATEGORIAS[c].label}</span>
+              <span class="cont">{String(contagem(c)).padStart(2, '0')}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <div class="publi">
+    <span class="publi-rotulo">Publicidade</span>
+    <a href="#" rel="sponsored" class="anuncio-texto">
+      <span class="kicker">JG Bebedouros</span>
+      <strong class="titulo">Água gelada para condomínios e escolas, com manutenção inclusa.</strong>
+      <span class="cta">Saiba mais →</span>
+    </a>
+  </div>
+</aside>
+
+<style>
+  .lateral {
+    display: grid;
+    gap: var(--sp-6);
+    align-content: start;
+  }
+  .publi {
+    display: grid;
+    gap: var(--sp-2);
+  }
+  .publi-rotulo {
+    font-size: var(--fs-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-texto-3);
+    text-align: center;
+  }
+  .publi img {
+    width: 100%;
+    border-radius: var(--raio);
+  }
+  .bloco-titulo {
+    padding-top: var(--sp-2);
+    margin-bottom: var(--sp-4);
+    border-top: 2px solid var(--c-filete-forte);
+    font-family: var(--ff-ui);
+    font-size: var(--fs-micro);
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .mais-lidas {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-4);
+  }
+  .mais-lidas li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    align-items: start;
+    gap: var(--sp-2);
+    padding-bottom: var(--sp-4);
+    border-bottom: var(--filete) solid var(--c-filete);
+  }
+  .mais-lidas li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .n {
+    font-family: var(--ff-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 2.5rem;
+    line-height: 0.85;
+    color: var(--c-acento);
+  }
+  .mais-lidas .titulo {
+    font-size: 1.0625rem;
+  }
+  .carta {
+    padding: var(--sp-5);
+    background: var(--c-invertido);
+    color: var(--c-sobre-invertido);
+    border-radius: var(--raio);
+  }
+  .carta .bloco-titulo {
+    border-color: currentColor;
+  }
+  .carta p {
+    font-family: var(--ff-texto);
+    font-size: 1rem;
+    margin-bottom: var(--sp-4);
+    opacity: 0.8;
+  }
+  .form-mini {
+    display: flex;
+    border-bottom: var(--filete) solid currentColor;
+  }
+  .form-mini input {
+    flex: 1;
+    min-width: 0;
+    padding: var(--sp-2) 0;
+    background: none;
+    border: 0;
+    outline: 0;
+  }
+  .form-mini input::placeholder {
+    color: inherit;
+    opacity: 0.5;
+  }
+  .form-mini button {
+    background: none;
+    border: 0;
+    font-weight: 650;
+    font-size: var(--fs-meta);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .editorias {
+    list-style: none;
+    padding: 0;
+  }
+  .editorias a {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--sp-2) 0;
+    border-bottom: var(--filete) solid var(--c-filete);
+    font-family: var(--ff-display);
+    font-size: 1.0625rem;
+    transition: color var(--dur), padding var(--dur) var(--ease);
+  }
+  .editorias a:hover {
+    color: var(--c-acento);
+    padding-left: var(--sp-2);
+  }
+  .cont {
+    font-family: var(--ff-ui);
+    font-size: var(--fs-meta);
+    color: var(--c-texto-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .anuncio-texto {
+    display: grid;
+    gap: var(--sp-2);
+    padding: var(--sp-5);
+    border: var(--filete) solid var(--c-filete);
+    border-radius: var(--raio);
+    background: var(--c-superficie);
+    transition: border-color var(--dur);
+  }
+  .anuncio-texto:hover {
+    border-color: var(--c-acento);
+  }
+  .anuncio-texto .kicker {
+    color: var(--c-ok);
+  }
+  .anuncio-texto .titulo {
+    font-size: var(--fs-h5);
+  }
+  .cta {
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    color: var(--c-acento);
+  }
+</style>
