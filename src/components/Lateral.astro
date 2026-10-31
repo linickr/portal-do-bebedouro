@@ -64,11 +64,15 @@ const contagem = (c: Categoria) => posts.filter((p) => p.data.categoria === c).l
 
   <div class="publi">
     <span class="publi-rotulo">Publicidade</span>
-    <a href="#" rel="sponsored" class="anuncio-texto">
+    <div class="anuncio-texto">
       <span class="kicker">JG Bebedouros</span>
       <strong class="titulo">Água gelada para condomínios e escolas, com manutenção inclusa.</strong>
-      <span class="cta">Saiba mais →</span>
-    </a>
+      <a href="tel:+5511926444545" class="cta">(11) 92644-4545</a>
+      <p class="empresa">
+        Brasil Bebedouro Comércio de Máquinas e Equipamentos LTDA<br />
+        CNPJ 31.368.701/0001-01
+      </p>
+    </div>
   </div>
 </aside>
 
@@ -214,8 +218,20 @@ const contagem = (c: Categoria) => posts.filter((p) => p.data.categoria === c).l
     font-size: var(--fs-h5);
   }
   .cta {
-    font-size: var(--fs-meta);
-    font-weight: 600;
+    font-size: var(--fs-ui);
+    font-weight: 650;
     color: var(--c-acento);
+    font-variant-numeric: tabular-nums;
+  }
+  .cta:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .empresa {
+    padding-top: var(--sp-2);
+    border-top: var(--filete) solid var(--c-filete);
+    font-size: var(--fs-micro);
+    line-height: 1.5;
+    color: var(--c-texto-3);
   }
 </style>
